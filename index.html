@@ -23,56 +23,56 @@
     <header class="sticky top-0 z-40 glass border-b border-white/10 px-4 py-3 shadow-lg">
         <div class="max-w-4xl mx-auto flex items-center justify-between">
             <div class="flex items-center space-x-3">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-purple-600 to-pink-500 flex items-center justify-center shadow-md shadow-purple-500/30">
-                    <i class="fa-solid fa-headphones-simple text-white text-lg"></i>
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-tr from-purple-600 to-pink-500 flex items-center justify-center shadow-md shadow-purple-500/30">
+                    <i class="fa-solid fa-headphones-simple text-white text-xl"></i>
                 </div>
                 <div>
-                    <h1 class="font-extrabold text-lg tracking-tight bg-gradient-to-r from-white via-slate-200 to-purple-300 bg-clip-text text-transparent">My Music Hub</h1>
-                    <p class="text-xs text-purple-300/80 font-medium">One-Touch Streaming Portal</p>
+                    <h1 class="font-extrabold text-xl tracking-tight bg-gradient-to-r from-white via-slate-200 to-purple-300 bg-clip-text text-transparent">My Music Hub</h1>
+                    <p class="text-sm text-purple-300/80 font-medium">One-Touch Streaming Portal</p>
                 </div>
             </div>
             
             <div class="flex items-center space-x-2">
-                <button onclick="openQRModal()" class="px-3 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-xs font-semibold flex items-center space-x-1.5 transition border border-white/10">
+                <button onclick="openQRModal()" class="px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-sm font-semibold flex items-center space-x-2 transition border border-white/10">
                     <i class="fa-solid fa-qrcode text-purple-400"></i>
                     <span class="hidden sm:inline">QRコード</span>
                 </button>
-                <button id="authBtn" onclick="toggleAuth()" class="px-3 py-2 rounded-xl bg-purple-600/80 hover:bg-purple-600 text-xs font-semibold flex items-center space-x-1.5 transition shadow-md shadow-purple-900/50">
+                <button id="authBtn" onclick="toggleAuth()" class="px-4 py-2.5 rounded-xl bg-purple-600/80 hover:bg-purple-600 text-sm font-semibold flex items-center space-x-2 transition shadow-md shadow-purple-900/50">
                     <i class="fa-solid fa-lock text-purple-200" id="authIcon"></i>
-                    <span id="authText">管理者ログイン</span>
+                    <span id="authText">管理者</span>
                 </button>
             </div>
         </div>
     </header>
 
     <!-- メインコンテンツ -->
-    <main class="max-w-4xl mx-auto px-4 mt-6">
+    <main class="max-w-4xl mx-auto px-4 mt-8">
         
         <!-- コントロールバー（検索・追加ボタン） -->
-        <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 mb-6">
+        <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 mb-8">
             <div class="relative flex-1">
-                <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
-                <input type="text" id="searchInput" oninput="renderMusicList()" placeholder="曲名やアーティスト名で検索..." class="w-full bg-slate-800/60 border border-slate-700/60 rounded-2xl pl-10 pr-4 py-2.5 text-sm focus:outline-none focus:border-purple-500 transition shadow-inner">
+                <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-base"></i>
+                <input type="text" id="searchInput" oninput="renderMusicList()" placeholder="曲名やアーティスト名で検索..." class="w-full bg-slate-800/60 border border-slate-700/60 rounded-2xl pl-12 pr-4 py-3 text-base focus:outline-none focus:border-purple-500 transition shadow-inner">
             </div>
             
-            <button id="addBtn" onclick="openEditModal()" class="hidden px-5 py-2.5 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white rounded-2xl text-sm font-bold shadow-lg shadow-purple-600/30 flex items-center justify-center space-x-2 transition">
+            <button id="addBtn" onclick="openEditModal()" class="hidden px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white rounded-2xl text-base font-bold shadow-lg shadow-purple-600/30 flex items-center justify-center space-x-2 transition">
                 <i class="fa-solid fa-plus"></i>
                 <span>新規追加</span>
             </button>
         </div>
 
         <!-- 音楽カード一覧 -->
-        <div id="musicGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div id="musicGrid" class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <!-- JavaScriptで動的に生成されます -->
         </div>
 
         <!-- データが空のときの表示 -->
-        <div id="emptyState" class="hidden text-center py-16">
-            <div class="w-16 h-16 bg-slate-800/80 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-500 text-2xl border border-slate-700">
+        <div id="emptyState" class="hidden text-center py-20">
+            <div class="w-20 h-20 bg-slate-800/80 rounded-full flex items-center justify-center mx-auto mb-5 text-slate-500 text-3xl border border-slate-700">
                 <i class="fa-solid fa-music"></i>
             </div>
-            <p class="text-slate-400 text-sm font-medium">まだ曲が登録されていません</p>
-            <p class="text-slate-500 text-xs mt-1">「管理者ログイン」をして曲を追加してみましょう！</p>
+            <p class="text-slate-400 text-base font-medium">まだ曲が登録されていません</p>
+            <p class="text-slate-500 text-sm mt-2">「管理者」からログインして曲を追加してみましょう！</p>
         </div>
     </main>
 
@@ -80,50 +80,50 @@
     <div id="editModal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center p-4 overflow-y-auto">
         <div class="bg-slate-900 border border-slate-800 w-full max-w-lg rounded-3xl p-6 shadow-2xl my-8">
             <div class="flex items-center justify-between mb-5">
-                <h3 id="modalTitle" class="text-lg font-bold text-white flex items-center space-x-2">
+                <h3 id="modalTitle" class="text-xl font-bold text-white flex items-center space-x-2">
                     <i class="fa-solid fa-pen-to-square text-purple-400"></i>
                     <span>曲情報の編集</span>
                 </h3>
-                <button onclick="closeEditModal()" class="w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-slate-400 hover:text-white transition">
+                <button onclick="closeEditModal()" class="w-10 h-10 rounded-full bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-slate-400 hover:text-white transition text-lg">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
 
-            <form id="musicForm" onsubmit="saveMusic(event)" class="space-y-4">
+            <form id="musicForm" onsubmit="saveMusic(event)" class="space-y-5">
                 <input type="hidden" id="musicId">
                 
                 <div>
-                    <label class="block text-xs font-semibold text-slate-300 mb-1">曲名 <span class="text-pink-500">*</span></label>
-                    <input type="text" id="formTitle" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2 text-sm text-white focus:outline-none focus:border-purple-500">
+                    <label class="block text-sm font-semibold text-slate-300 mb-2">曲名 <span class="text-pink-500">*</span></label>
+                    <input type="text" id="formTitle" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-base text-white focus:outline-none focus:border-purple-500">
                 </div>
 
                 <div>
-                    <label class="block text-xs font-semibold text-slate-300 mb-1">アーティスト名 <span class="text-pink-500">*</span></label>
-                    <input type="text" id="formArtist" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2 text-sm text-white focus:outline-none focus:border-purple-500">
+                    <label class="block text-sm font-semibold text-slate-300 mb-2">アーティスト名 <span class="text-pink-500">*</span></label>
+                    <input type="text" id="formArtist" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-base text-white focus:outline-none focus:border-purple-500">
                 </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-xs font-semibold text-slate-300 mb-1">YouTubeリンク</label>
-                        <input type="url" id="formYoutube" placeholder="https://youtu.be/..." class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2 text-sm text-white focus:outline-none focus:border-purple-500">
+                        <label class="block text-sm font-semibold text-slate-300 mb-2">YouTubeリンク</label>
+                        <input type="url" id="formYoutube" placeholder="https://youtu.be/..." class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-base text-white focus:outline-none focus:border-purple-500">
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-slate-300 mb-1">音楽配信リンク (Spotify等)</label>
-                        <input type="url" id="formStreaming" placeholder="https://..." class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2 text-sm text-white focus:outline-none focus:border-purple-500">
+                        <label class="block text-sm font-semibold text-slate-300 mb-2">音楽配信リンク</label>
+                        <input type="url" id="formStreaming" placeholder="https://..." class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-base text-white focus:outline-none focus:border-purple-500">
                     </div>
                 </div>
 
                 <div>
-                    <label class="block text-xs font-semibold text-slate-300 mb-1">ジャケット画像</label>
-                    <div class="space-y-2">
-                        <input type="file" id="imageFileInput" accept="image/*" onchange="handleImageSelect(event)" class="w-full text-xs text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-purple-600/20 file:text-purple-300 hover:file:bg-purple-600/30 cursor-pointer">
-                        <input type="text" id="formImage" placeholder="または画像URLを直接入力" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-purple-500">
+                    <label class="block text-sm font-semibold text-slate-300 mb-2">ジャケット画像</label>
+                    <div class="space-y-3">
+                        <input type="file" id="imageFileInput" accept="image/*" onchange="handleImageSelect(event)" class="w-full text-sm text-slate-400 file:mr-4 file:py-2.5 file:px-5 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-purple-600/20 file:text-purple-300 hover:file:bg-purple-600/30 cursor-pointer">
+                        <input type="text" id="formImage" placeholder="または画像URLを直接入力" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-purple-500">
                     </div>
                 </div>
 
-                <div class="flex justify-end space-x-3 pt-4 border-t border-slate-800">
-                    <button type="button" onclick="closeEditModal()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-300 transition">キャンセル</button>
-                    <button type="submit" class="px-5 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-xs font-bold text-white shadow-lg shadow-purple-600/30 transition">保存する</button>
+                <div class="flex justify-end space-x-3 pt-5 border-t border-slate-800">
+                    <button type="button" onclick="closeEditModal()" class="px-5 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-sm font-semibold text-slate-300 transition">キャンセル</button>
+                    <button type="submit" class="px-6 py-3 rounded-xl bg-purple-600 hover:bg-purple-500 text-sm font-bold text-white shadow-lg shadow-purple-600/30 transition">保存する</button>
                 </div>
             </form>
         </div>
@@ -132,40 +132,40 @@
     <!-- 画像トリミング・位置調整モーダル -->
     <div id="cropModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
         <div class="bg-slate-900 border border-slate-800 w-full max-w-sm rounded-3xl p-6 shadow-2xl text-center">
-            <h3 class="text-md font-bold text-white mb-3">ジャケット画像の調整</h3>
-            <p class="text-xs text-slate-400 mb-4">プレビュー枠内でドラッグして位置を合わせ、ズームを調整してください</p>
+            <h3 class="text-lg font-bold text-white mb-3">画像の調整</h3>
+            <p class="text-sm text-slate-400 mb-5">枠内でドラッグして位置を合わせ、ズームを調整</p>
             
-            <div id="cropContainer" class="relative w-48 h-48 mx-auto bg-slate-950 rounded-2xl overflow-hidden border-2 border-purple-500/50 cursor-grab active:cursor-grabbing mb-4 touch-none select-none">
+            <div id="cropContainer" class="relative w-56 h-56 mx-auto bg-slate-950 rounded-2xl overflow-hidden border-2 border-purple-500/50 cursor-grab active:cursor-grabbing mb-5 touch-none select-none">
                 <img id="cropImage" class="absolute max-none origin-top-left pointer-events-none" alt="Crop preview">
             </div>
 
-            <div class="mb-5 px-4">
-                <label class="block text-xs text-slate-400 mb-1">ズーム倍率</label>
+            <div class="mb-6 px-4">
+                <label class="block text-sm text-slate-400 mb-2">ズーム倍率</label>
                 <input type="range" id="zoomRange" min="1" max="3" step="0.05" value="1" oninput="updateCropTransform()" class="w-full accent-purple-500">
             </div>
 
-            <div class="flex space-x-2">
-                <button type="button" onclick="closeCropModal()" class="flex-1 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-300 transition">キャンセル</button>
-                <button type="button" onclick="applyCrop()" class="flex-1 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-xs font-bold text-white shadow-lg shadow-purple-600/30 transition">この位置で決定</button>
+            <div class="flex space-x-3">
+                <button type="button" onclick="closeCropModal()" class="flex-1 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-sm font-semibold text-slate-300 transition">キャンセル</button>
+                <button type="button" onclick="applyCrop()" class="flex-1 py-3 rounded-xl bg-purple-600 hover:bg-purple-500 text-sm font-bold text-white shadow-lg shadow-purple-600/30 transition">決定</button>
             </div>
         </div>
     </div>
 
     <!-- QRコード表示モーダル -->
     <div id="qrModal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center p-4">
-        <div class="bg-slate-900 border border-slate-800 w-full max-w-sm rounded-3xl p-6 shadow-2xl text-center">
-            <div class="flex items-center justify-between mb-4">
-                <h3 class="text-md font-bold text-white">サイト共有用 QRコード</h3>
-                <button onclick="closeQRModal()" class="w-7 h-7 rounded-full bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-slate-400 hover:text-white transition">
+        <div class="bg-slate-900 border border-slate-800 w-full max-w-sm rounded-3xl p-8 shadow-2xl text-center">
+            <div class="flex items-center justify-between mb-5">
+                <h3 class="text-lg font-bold text-white">サイト共有用 QRコード</h3>
+                <button onclick="closeQRModal()" class="w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-slate-400 hover:text-white transition">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
             
-            <div id="qrcodeContainer" class="bg-white p-4 rounded-2xl inline-block shadow-inner mb-4"></div>
+            <div id="qrcodeContainer" class="bg-white p-5 rounded-2xl inline-block shadow-inner mb-5"></div>
             
-            <p class="text-xs text-slate-400 mb-4 break-all px-2" id="currentUrlText"></p>
+            <p class="text-sm text-slate-400 mb-5 break-all px-2" id="currentUrlText"></p>
             
-            <button onclick="copyCurrentUrl()" class="w-full py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-xs font-bold text-white shadow-md shadow-purple-600/30 transition flex items-center justify-center space-x-2">
+            <button onclick="copyCurrentUrl()" class="w-full py-3 rounded-xl bg-purple-600 hover:bg-purple-500 text-base font-bold text-white shadow-md shadow-purple-600/30 transition flex items-center justify-center space-x-2">
                 <i class="fa-solid fa-copy"></i>
                 <span>URLをコピーする</span>
             </button>
@@ -174,20 +174,20 @@
 
     <!-- ログインモーダル -->
     <div id="loginModal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center p-4">
-        <div class="bg-slate-900 border border-slate-800 w-full max-w-sm rounded-3xl p-6 shadow-2xl">
-            <div class="flex items-center justify-between mb-4">
-                <h3 class="text-md font-bold text-white flex items-center space-x-2">
+        <div class="bg-slate-900 border border-slate-800 w-full max-w-sm rounded-3xl p-8 shadow-2xl">
+            <div class="flex items-center justify-between mb-5">
+                <h3 class="text-lg font-bold text-white flex items-center space-x-2">
                     <i class="fa-solid fa-lock text-purple-400"></i>
                     <span>管理者ログイン</span>
                 </h3>
-                <button onclick="closeLoginModal()" class="w-7 h-7 rounded-full bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-slate-400 hover:text-white transition">
+                <button onclick="closeLoginModal()" class="w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-slate-400 hover:text-white transition">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
-            <p class="text-xs text-slate-400 mb-4">管理者パスワードを入力してください（初期設定: password）</p>
-            <form onsubmit="handleLoginSubmit(event)" class="space-y-3">
-                <input type="password" id="adminPasswordInput" placeholder="パスワード" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2 text-sm text-white focus:outline-none focus:border-purple-500">
-                <button type="submit" class="w-full py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-xs font-bold text-white shadow-lg shadow-purple-600/30 transition">ログイン</button>
+            <p class="text-sm text-slate-400 mb-5">管理者パスワードを入力（初期: password）</p>
+            <form onsubmit="handleLoginSubmit(event)" class="space-y-4">
+                <input type="password" id="adminPasswordInput" placeholder="パスワード" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-base text-white focus:outline-none focus:border-purple-500">
+                <button type="submit" class="w-full py-3 rounded-xl bg-purple-600 hover:bg-purple-500 text-base font-bold text-white shadow-lg shadow-purple-600/30 transition">ログイン</button>
             </form>
         </div>
     </div>
@@ -196,7 +196,7 @@
     <script>
         let isAdmin = false;
         let musicList = JSON.parse(localStorage.getItem('my_music_list_v2')) || [];
-        let chartInstances = {}; // グラフインスタンス保持用
+        let chartInstances = {}; 
 
         if (musicList.length === 0) {
             musicList = [
@@ -231,12 +231,12 @@
                 addBtn.classList.remove('hidden');
                 authText.textContent = 'ログアウト';
                 authIcon.className = 'fa-solid fa-unlock text-emerald-400';
-                authBtn.className = 'px-3 py-2 rounded-xl bg-emerald-600/80 hover:bg-emerald-600 text-xs font-semibold flex items-center space-x-1.5 transition shadow-md shadow-emerald-950/50';
+                authBtn.className = 'px-4 py-2.5 rounded-xl bg-emerald-600/80 hover:bg-emerald-600 text-sm font-semibold flex items-center space-x-2 transition shadow-md shadow-emerald-950/50';
             } else {
                 addBtn.classList.add('hidden');
-                authText.textContent = '管理者ログイン';
+                authText.textContent = '管理者';
                 authIcon.className = 'fa-solid fa-lock text-purple-200';
-                authBtn.className = 'px-3 py-2 rounded-xl bg-purple-600/80 hover:bg-purple-600 text-xs font-semibold flex items-center space-x-1.5 transition shadow-md shadow-purple-900/50';
+                authBtn.className = 'px-4 py-2.5 rounded-xl bg-purple-600/80 hover:bg-purple-600 text-sm font-semibold flex items-center space-x-2 transition shadow-md shadow-purple-900/50';
             }
             renderMusicList();
         }
@@ -269,7 +269,6 @@
             }
         }
 
-        // 再生回数の記録＆即時グラフ更新
         function recordPlay(id) {
             let stats = JSON.parse(localStorage.getItem('my_music_stats')) || {};
             const now = new Date();
@@ -280,12 +279,9 @@
             stats[id].times[timeKey] = (stats[id].times[timeKey] || 0) + 1;
 
             localStorage.setItem('my_music_stats', JSON.stringify(stats));
-            
-            // 該当カードのグラフを即時再描画
             renderCardChart(id);
         }
 
-        // 音楽リストの描画
         function renderMusicList() {
             const grid = document.getElementById('musicGrid');
             const emptyState = document.getElementById('emptyState');
@@ -297,7 +293,7 @@
             );
 
             grid.innerHTML = '';
-            chartInstances = {}; // 破棄
+            chartInstances = {}; 
 
             if (filtered.length === 0) {
                 emptyState.classList.remove('hidden');
@@ -308,45 +304,48 @@
 
             filtered.forEach(item => {
                 const card = document.createElement('div');
-                card.className = 'glass rounded-3xl p-4 flex flex-col justify-between shadow-lg relative overflow-hidden group hover:border-purple-500/40 transition';
+                // 余白(p-6)を大きくしてカード自体を大型化
+                card.className = 'glass rounded-[2rem] p-6 flex flex-col justify-between shadow-xl relative overflow-hidden group hover:border-purple-500/50 transition duration-300';
                 
                 card.innerHTML = `
                     <div>
-                        <div class="flex items-center space-x-4 mb-3">
-                            <img src="${item.image || 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=300&auto=format&fit=crop&q=60'}" class="w-20 h-20 rounded-2xl object-cover shadow-md flex-shrink-0" alt="${item.title}">
+                        <div class="flex items-center space-x-5 mb-5">
+                            <!-- 画像を大幅に拡大 (w-28 h-28) -->
+                            <img src="${item.image || 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=300&auto=format&fit=crop&q=60'}" class="w-28 h-28 rounded-2xl object-cover shadow-lg flex-shrink-0" alt="${item.title}">
                             <div class="flex-1 min-w-0">
-                                <h4 class="font-bold text-white text-base truncate mb-0.5">${escapeHtml(item.title)}</h4>
-                                <p class="text-xs text-purple-300 font-medium truncate mb-3">${escapeHtml(item.artist)}</p>
+                                <!-- タイトルとアーティストの文字サイズを拡大 -->
+                                <h4 class="font-extrabold text-white text-xl md:text-2xl truncate mb-1">${escapeHtml(item.title)}</h4>
+                                <p class="text-sm md:text-base text-purple-300 font-semibold truncate mb-4">${escapeHtml(item.artist)}</p>
                                 
-                                <div class="flex items-center space-x-2">
-                                    ${item.youtube ? `<a href="${item.youtube}" target="_blank" onclick="recordPlay('${item.id}')" class="px-3 py-1.5 bg-red-600/90 hover:bg-red-600 text-white rounded-xl text-xs font-bold flex items-center space-x-1.5 shadow-sm transition"><i class="fa-brands fa-youtube"></i><span>YouTube</span></a>` : ''}
-                                    ${item.streaming ? `<a href="${item.streaming}" target="_blank" onclick="recordPlay('${item.id}')" class="px-3 py-1.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white rounded-xl text-xs font-bold flex items-center space-x-1.5 shadow-sm transition"><i class="fa-solid fa-headphones"></i><span>配信で聴く</span></a>` : ''}
+                                <div class="flex flex-wrap gap-3">
+                                    <!-- ボタンを大きく、押しやすく変更 (px-5 py-2.5 text-sm) -->
+                                    ${item.youtube ? `<a href="${item.youtube}" target="_blank" onclick="recordPlay('${item.id}')" class="px-5 py-2.5 bg-red-600/90 hover:bg-red-600 text-white rounded-2xl text-sm font-bold flex items-center space-x-2 shadow-md transition"><i class="fa-brands fa-youtube text-lg"></i><span>YouTube</span></a>` : ''}
+                                    ${item.streaming ? `<a href="${item.streaming}" target="_blank" onclick="recordPlay('${item.id}')" class="px-5 py-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white rounded-2xl text-sm font-bold flex items-center space-x-2 shadow-md transition"><i class="fa-solid fa-headphones text-lg"></i><span>配信で聴く</span></a>` : ''}
                                 </div>
                             </div>
                         </div>
 
-                        <!-- カード内ミニグラフ -->
-                        <div class="mt-2 pt-2 border-t border-white/10">
-                            <div class="flex items-center justify-between text-[11px] text-slate-400 mb-1 font-semibold">
-                                <span><i class="fa-solid fa-chart-line text-purple-400 mr-1"></i>再生回数推移</span>
-                                <span id="total-count-${item.id}" class="text-purple-300">総合: 0回</span>
+                        <!-- カード内ミニグラフを高く大きく変更 (h-32) -->
+                        <div class="mt-4 pt-4 border-t border-white/10">
+                            <div class="flex items-center justify-between text-sm text-slate-300 mb-2 font-bold">
+                                <span><i class="fa-solid fa-chart-line text-purple-400 mr-2"></i>再生回数推移</span>
+                                <span id="total-count-${item.id}" class="text-purple-300 bg-purple-900/30 px-3 py-1 rounded-lg">総合: 0回</span>
                             </div>
-                            <div class="bg-slate-950/60 rounded-xl p-2 h-20 relative">
+                            <div class="bg-slate-950/60 rounded-2xl p-3 h-32 relative shadow-inner">
                                 <canvas id="chart-${item.id}"></canvas>
                             </div>
                         </div>
                     </div>
 
                     ${isAdmin ? `
-                        <div class="absolute top-3 right-3 flex items-center space-x-1 bg-slate-900/70 backdrop-blur-md p-1 rounded-xl border border-slate-700">
-                            <button onclick="openEditModal('${item.id}')" class="w-7 h-7 rounded-lg hover:bg-white/10 text-slate-300 flex items-center justify-center text-xs transition" title="編集"><i class="fa-solid fa-pen"></i></button>
-                            <button onclick="deleteMusic('${item.id}')" class="w-7 h-7 rounded-lg hover:bg-red-500/20 text-red-400 flex items-center justify-center text-xs transition" title="削除"><i class="fa-solid fa-trash"></i></button>
+                        <div class="absolute top-4 right-4 flex items-center space-x-2 bg-slate-900/80 backdrop-blur-md p-1.5 rounded-xl border border-slate-700 shadow-lg">
+                            <button onclick="openEditModal('${item.id}')" class="w-9 h-9 rounded-lg hover:bg-white/10 text-slate-300 flex items-center justify-center text-sm transition" title="編集"><i class="fa-solid fa-pen"></i></button>
+                            <button onclick="deleteMusic('${item.id}')" class="w-9 h-9 rounded-lg hover:bg-red-500/20 text-red-400 flex items-center justify-center text-sm transition" title="削除"><i class="fa-solid fa-trash"></i></button>
                         </div>
                     ` : ''}
                 `;
                 grid.appendChild(card);
                 
-                // グラフを描画
                 renderCardChart(item.id);
             });
         }
@@ -365,7 +364,6 @@
 
             const ctx = canvasEl.getContext('2d');
             
-            // 直近の時間帯ラベル
             const labels = ['前々時', '前時', '現在'];
             const nowHour = new Date().getHours();
             const timeKeys = [
@@ -388,10 +386,11 @@
                         data: dataValues,
                         borderColor: 'rgba(168, 85, 247, 1)',
                         backgroundColor: 'rgba(168, 85, 247, 0.15)',
-                        borderWidth: 2,
+                        borderWidth: 3,
                         tension: 0.3,
                         fill: true,
-                        pointRadius: 2
+                        pointRadius: 4,
+                        pointHoverRadius: 6
                     }]
                 },
                 options: {
@@ -400,11 +399,11 @@
                     scales: {
                         y: {
                             beginAtZero: true,
-                            ticks: { color: '#94a3b8', stepSize: 1, font: { size: 9 } },
-                            grid: { color: 'rgba(255, 255, 255, 0.03)' }
+                            ticks: { color: '#cbd5e1', stepSize: 1, font: { size: 11, weight: 'bold' } },
+                            grid: { color: 'rgba(255, 255, 255, 0.05)' }
                         },
                         x: {
-                            ticks: { color: '#94a3b8', font: { size: 9 } },
+                            ticks: { color: '#cbd5e1', font: { size: 11, weight: 'bold' } },
                             grid: { display: false }
                         }
                     },
@@ -415,7 +414,6 @@
             });
         }
 
-        // 追加・編集モーダル操作
         function openEditModal(id = null) {
             const modal = document.getElementById('editModal');
             const titleEl = document.getElementById('modalTitle');
@@ -477,7 +475,6 @@
             }
         }
 
-        // 画像トリミング関連変数
         let cropState = { imageObj: null, scale: 1, posX: 0, posY: 0, startX: 0, startY: 0, isDragging: false };
 
         function handleImageSelect(e) {
@@ -536,16 +533,16 @@
 
         function applyCrop() {
             const canvas = document.createElement('canvas');
-            canvas.width = 300;
-            canvas.height = 300;
+            canvas.width = 400;
+            canvas.height = 400;
             const ctx = canvas.getContext('2d');
             
             ctx.fillStyle = '#0f172a';
-            ctx.fillRect(0, 0, 300, 300);
+            ctx.fillRect(0, 0, 400, 400);
             
             const img = cropState.imageObj;
-            const containerSize = 192; // w-48 (192px)
-            const ratio = 300 / containerSize;
+            const containerSize = 224; // w-56
+            const ratio = 400 / containerSize;
             
             ctx.save();
             ctx.translate(cropState.posX * ratio, cropState.posY * ratio);
@@ -560,7 +557,6 @@
             document.getElementById('editModal').classList.remove('hidden');
         }
 
-        // QRコードモーダル
         function openQRModal() {
             const url = window.location.href;
             document.getElementById('currentUrlText').textContent = url;
@@ -574,7 +570,7 @@
                 qr.make();
                 qrContainer.innerHTML = qr.createImgTag(5, 4);
             } catch (err) {
-                qrContainer.innerHTML = '<p class="text-xs text-red-500">QR生成エラー</p>';
+                qrContainer.innerHTML = '<p class="text-sm text-red-500">QR生成エラー</p>';
             }
             
             document.getElementById('qrModal').classList.remove('hidden');
