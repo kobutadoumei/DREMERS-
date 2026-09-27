@@ -249,7 +249,17 @@
             }
         }
 
-        function recordPlay(id) {
+        // YouTubeボタンが押されたときのカウント関数（2026年9月28日 21:00以降のみカウント）
+        function recordYoutubePlay(id) {
+            const targetTime = new Date('2026-09-28T21:00:00').getTime();
+            const currentTime = new Date().getTime();
+
+            // 2026-09-28 21:00 より前ならカウントしない
+            if (currentTime < targetTime) {
+                alert('この曲の再生カウント集計は 2026年9月28日 21:00 から開始されます！');
+                return;
+            }
+
             let stats = JSON.parse(localStorage.getItem('my_music_stats')) || {};
             const now = new Date();
             const timeKey = `${now.getHours()}:00`;
@@ -284,12 +294,11 @@
 
             filtered.forEach(item => {
                 const card = document.createElement('div');
-                // カード全体をスッキリさせ、上部に横長画像を配置する構造
                 card.className = 'glass rounded-[2rem] overflow-hidden shadow-xl relative group hover:border-purple-500/50 transition duration-300 flex flex-col justify-between';
                 
                 card.innerHTML = `
                     <div>
-                        <!-- 【上部配置】Xヘッダー風の大きな横長ワイド画像 (h-40) -->
+                        <!-- 上部配置：Xヘッダー風の大きな横長ワイド画像 -->
                         <div class="w-full h-40 bg-slate-950 overflow-hidden relative">
                             <img src="${item.image || 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800&auto=format&fit=crop&q=60'}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" alt="${item.title}">
                             <div class="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent"></div>
@@ -297,22 +306,21 @@
 
                         <!-- 下部コンテンツエリア -->
                         <div class="p-6">
-                            <!-- 曲名とアーティスト名 -->
                             <div class="mb-5">
                                 <h4 class="font-extrabold text-white text-2xl truncate mb-1">${escapeHtml(item.title)}</h4>
                                 <p class="text-base text-purple-300 font-semibold truncate">${escapeHtml(item.artist)}</p>
                             </div>
                             
-                            <!-- 【ボタン】YouTubeと配信ボタンをその下に配置 -->
+                            <!-- ボタン配置 (YouTubeのみ時間制限付きカウント関数を適用) -->
                             <div class="flex flex-wrap gap-3 mb-6">
-                                ${item.youtube ? `<a href="${item.youtube}" target="_blank" onclick="recordPlay('${item.id}')" class="flex-1 min-w-[130px] py-3 px-4 bg-red-600/90 hover:bg-red-600 text-white rounded-2xl text-sm font-bold flex items-center justify-center space-x-2 shadow-lg transition"><i class="fa-brands fa-youtube text-lg"></i><span>YouTube</span></a>` : ''}
-                                ${item.streaming ? `<a href="${item.streaming}" target="_blank" onclick="recordPlay('${item.id}')" class="flex-1 min-w-[130px] py-3 px-4 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white rounded-2xl text-sm font-bold flex items-center justify-center space-x-2 shadow-lg transition"><i class="fa-solid fa-headphones text-lg"></i><span>配信で聴く</span></a>` : ''}
+                                ${item.youtube ? `<a href="${item.youtube}" target="_blank" onclick="recordYoutubePlay('${item.id}')" class="flex-1 min-w-[130px] py-3 px-4 bg-red-600/90 hover:bg-red-600 text-white rounded-2xl text-sm font-bold flex items-center justify-center space-x-2 shadow-lg transition"><i class="fa-brands fa-youtube text-lg"></i><span>YouTube</span></a>` : ''}
+                                ${item.streaming ? `<a href="${item.streaming}" target="_blank" class="flex-1 min-w-[130px] py-3 px-4 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white rounded-2xl text-sm font-bold flex items-center justify-center space-x-2 shadow-lg transition"><i class="fa-solid fa-headphones text-lg"></i><span>配信で聴く</span></a>` : ''}
                             </div>
 
                             <!-- ミニグラフ -->
                             <div class="pt-4 border-t border-white/10">
                                 <div class="flex items-center justify-between text-sm text-slate-300 mb-2 font-bold">
-                                    <span><i class="fa-solid fa-chart-line text-purple-400 mr-2"></i>再生回数推移</span>
+                                    <span><i class="fa-solid fa-chart-line text-purple-400 mr-2"></i>再生回数推移 (21:00以降)</span>
                                     <span id="total-count-${item.id}" class="text-purple-300 bg-purple-900/30 px-3 py-1 rounded-lg">総合: 0回</span>
                                 </div>
                                 <div class="bg-slate-950/60 rounded-2xl p-3 h-32 relative shadow-inner">
@@ -503,7 +511,7 @@
         function applyCrop() {
             const canvas = document.createElement('canvas');
             canvas.width = 800;
-            canvas.height = 320; // 横長ヘッダーサイズ
+            canvas.height = 320;
             const ctx = canvas.getContext('2d');
             ctx.fillStyle = '#0f172a';
             ctx.fillRect(0, 0, 800, 320);
