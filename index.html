@@ -101,7 +101,7 @@
                     </div>
                 </div>
                 <div>
-                    <label class="block text-sm font-semibold text-slate-300 mb-2">ヘッダー画像 (Xヘッダー比率)</label>
+                    <label class="block text-sm font-semibold text-slate-300 mb-2">ジャケット画像</label>
                     <div class="space-y-3">
                         <input type="file" id="imageFileInput" accept="image/*" onchange="handleImageSelect(event)" class="w-full text-sm text-slate-400 file:mr-4 file:py-2.5 file:px-5 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-purple-600/20 file:text-purple-300 hover:file:bg-purple-600/30 cursor-pointer">
                         <input type="text" id="formImage" placeholder="または画像URLを直接入力" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-purple-500">
@@ -117,10 +117,10 @@
 
     <!-- 画像トリミング・位置調整モーダル -->
     <div id="cropModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
-        <div class="bg-slate-900 border border-slate-800 w-full max-w-md rounded-3xl p-6 shadow-2xl text-center">
-            <h3 class="text-lg font-bold text-white mb-2">ヘッダー画像の調整</h3>
+        <div class="bg-slate-900 border border-slate-800 w-full max-w-sm rounded-3xl p-6 shadow-2xl text-center">
+            <h3 class="text-lg font-bold text-white mb-2">画像の調整</h3>
             <p class="text-sm text-slate-400 mb-4">枠内でドラッグして位置を合わせ、ズームを調整</p>
-            <div id="cropContainer" class="relative w-full h-36 mx-auto bg-slate-950 rounded-2xl overflow-hidden border-2 border-purple-500/50 cursor-grab active:cursor-grabbing mb-5 touch-none select-none">
+            <div id="cropContainer" class="relative w-48 h-48 mx-auto bg-slate-950 rounded-2xl overflow-hidden border-2 border-purple-500/50 cursor-grab active:cursor-grabbing mb-5 touch-none select-none">
                 <img id="cropImage" class="absolute max-none origin-top-left pointer-events-none" alt="Crop preview">
             </div>
             <div class="mb-6 px-4">
@@ -134,7 +134,7 @@
         </div>
     </div>
 
-    <!-- QRコードモーダル -->
+    <!-- QRコード表示モーダル -->
     <div id="qrModal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center p-4">
         <div class="bg-slate-900 border border-slate-800 w-full max-w-sm rounded-3xl p-8 shadow-2xl text-center">
             <div class="flex items-center justify-between mb-5">
@@ -186,7 +186,7 @@
                     artist: 'GENERATIONS',
                     youtube: 'https://youtu.be/oc395oRnMuk',
                     streaming: 'https://GENERATIONS.lnk.to/vibe0928',
-                    image: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=800&auto=format&fit=crop&q=60'
+                    image: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=500&auto=format&fit=crop&q=60'
                 }
             ];
             localStorage.setItem('my_music_list_v2', JSON.stringify(musicList));
@@ -284,37 +284,32 @@
 
             filtered.forEach(item => {
                 const card = document.createElement('div');
-                card.className = 'glass rounded-[2rem] overflow-hidden shadow-xl relative group hover:border-purple-500/50 transition duration-300 flex flex-col justify-between';
+                card.className = 'glass rounded-[2rem] p-6 shadow-xl relative group hover:border-purple-500/50 transition duration-300 flex flex-col justify-between';
                 
                 card.innerHTML = `
                     <div>
-                        <!-- Xヘッダー風の超ワイドバナー画像 (h-44 = 約176pxの高さで大きく横長に表示) -->
-                        <div class="w-full h-44 bg-slate-950 overflow-hidden relative">
-                            <img src="${item.image || 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800&auto=format&fit=crop&q=60'}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" alt="${item.title}">
-                            <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent"></div>
+                        <!-- 写真とタイトル部分（写真を大幅に拡大: w-32 h-32） -->
+                        <div class="flex items-center space-x-6 mb-5">
+                            <img src="${item.image || 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=500&auto=format&fit=crop&q=60'}" class="w-32 h-32 rounded-3xl object-cover shadow-2xl flex-shrink-0 border-2 border-white/20" alt="${item.title}">
+                            <div class="flex-1 min-w-0">
+                                <h4 class="font-extrabold text-white text-2xl md:text-3xl truncate mb-1.5">${escapeHtml(item.title)}</h4>
+                                <p class="text-base md:text-lg text-purple-300 font-semibold truncate mb-4">${escapeHtml(item.artist)}</p>
+                                
+                                <div class="flex flex-wrap gap-3">
+                                    ${item.youtube ? `<a href="${item.youtube}" target="_blank" onclick="recordPlay('${item.id}')" class="px-5 py-2.5 bg-red-600/90 hover:bg-red-600 text-white rounded-2xl text-sm font-bold flex items-center space-x-2 shadow-md transition"><i class="fa-brands fa-youtube text-lg"></i><span>YouTube</span></a>` : ''}
+                                    ${item.streaming ? `<a href="${item.streaming}" target="_blank" onclick="recordPlay('${item.id}')" class="px-5 py-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white rounded-2xl text-sm font-bold flex items-center space-x-2 shadow-md transition"><i class="fa-solid fa-headphones text-lg"></i><span>配信で聴く</span></a>` : ''}
+                                </div>
+                            </div>
                         </div>
 
-                        <!-- カード内情報エリア -->
-                        <div class="p-6">
-                            <div class="mb-4">
-                                <h4 class="font-extrabold text-white text-2xl truncate mb-1">${escapeHtml(item.title)}</h4>
-                                <p class="text-base text-purple-300 font-semibold truncate">${escapeHtml(item.artist)}</p>
+                        <!-- ミニグラフエリア -->
+                        <div class="pt-4 border-t border-white/10">
+                            <div class="flex items-center justify-between text-sm text-slate-300 mb-2 font-bold">
+                                <span><i class="fa-solid fa-chart-line text-purple-400 mr-2"></i>再生回数推移</span>
+                                <span id="total-count-${item.id}" class="text-purple-300 bg-purple-900/30 px-3 py-1 rounded-lg">総合: 0回</span>
                             </div>
-                            
-                            <div class="flex flex-wrap gap-3 mb-5">
-                                ${item.youtube ? `<a href="${item.youtube}" target="_blank" onclick="recordPlay('${item.id}')" class="px-5 py-2.5 bg-red-600/90 hover:bg-red-600 text-white rounded-2xl text-sm font-bold flex items-center space-x-2 shadow-md transition"><i class="fa-brands fa-youtube text-lg"></i><span>YouTube</span></a>` : ''}
-                                ${item.streaming ? `<a href="${item.streaming}" target="_blank" onclick="recordPlay('${item.id}')" class="px-5 py-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white rounded-2xl text-sm font-bold flex items-center space-x-2 shadow-md transition"><i class="fa-solid fa-headphones text-lg"></i><span>配信で聴く</span></a>` : ''}
-                            </div>
-
-                            <!-- ミニグラフ -->
-                            <div class="pt-4 border-t border-white/10">
-                                <div class="flex items-center justify-between text-sm text-slate-300 mb-2 font-bold">
-                                    <span><i class="fa-solid fa-chart-line text-purple-400 mr-2"></i>再生回数推移</span>
-                                    <span id="total-count-${item.id}" class="text-purple-300 bg-purple-900/30 px-3 py-1 rounded-lg">総合: 0回</span>
-                                </div>
-                                <div class="bg-slate-950/60 rounded-2xl p-3 h-32 relative shadow-inner">
-                                    <canvas id="chart-${item.id}"></canvas>
-                                </div>
+                            <div class="bg-slate-950/60 rounded-2xl p-3 h-32 relative shadow-inner">
+                                <canvas id="chart-${item.id}"></canvas>
                             </div>
                         </div>
                     </div>
@@ -420,7 +415,7 @@
             const artist = document.getElementById('formArtist').value;
             const youtube = document.getElementById('formYoutube').value;
             const streaming = document.getElementById('formStreaming').value;
-            const image = document.getElementById('formImage').value || 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800&auto=format&fit=crop&q=60';
+            const image = document.getElementById('formImage').value || 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=500&auto=format&fit=crop&q=60';
 
             if (id) {
                 const index = musicList.findIndex(m => m.id === id);
@@ -499,15 +494,15 @@
 
         function applyCrop() {
             const canvas = document.createElement('canvas');
-            canvas.width = 800;
-            canvas.height = 320; // 超ワイドヘッダー比率
+            canvas.width = 400;
+            canvas.height = 400; // 正方形
             const ctx = canvas.getContext('2d');
             ctx.fillStyle = '#0f172a';
-            ctx.fillRect(0, 0, 800, 320);
+            ctx.fillRect(0, 0, 400, 400);
             
             const img = cropState.imageObj;
-            const containerWidth = container.clientWidth;
-            const ratio = 800 / containerWidth;
+            const containerSize = container.clientWidth;
+            const ratio = 400 / containerSize;
             
             ctx.save();
             ctx.translate(cropState.posX * ratio, cropState.posY * ratio);
