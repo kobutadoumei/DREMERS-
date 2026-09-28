@@ -104,6 +104,30 @@
                         <input type="text" id="formImage" placeholder="または画像URLを直接入力" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-purple-500">
                     </div>
                 </div>
+
+                <!-- 表示・非表示の切り替え設定エリア -->
+                <div class="bg-slate-950/50 p-4 rounded-2xl border border-slate-800 space-y-3">
+                    <label class="block text-sm font-bold text-purple-300 mb-1"><i class="fa-solid fa-eye mr-2"></i>各パーツの表示設定</label>
+                    <div class="grid grid-cols-2 gap-3 text-sm text-slate-300">
+                        <label class="flex items-center space-x-2 cursor-pointer">
+                            <input type="checkbox" id="showYtSearch" class="w-4 h-4 rounded accent-purple-500" checked>
+                            <span>YT検索窓ボタン</span>
+                        </label>
+                        <label class="flex items-center space-x-2 cursor-pointer">
+                            <input type="checkbox" id="showStreaming" class="w-4 h-4 rounded accent-purple-500" checked>
+                            <span>音楽配信ボタン</span>
+                        </label>
+                        <label class="flex items-center space-x-2 cursor-pointer">
+                            <input type="checkbox" id="showShare" class="w-4 h-4 rounded accent-purple-500" checked>
+                            <span>シェアボタン</span>
+                        </label>
+                        <label class="flex items-center space-x-2 cursor-pointer">
+                            <input type="checkbox" id="showChart" class="w-4 h-4 rounded accent-purple-500" checked>
+                            <span>再生回数グラフ</span>
+                        </label>
+                    </div>
+                </div>
+
                 <div class="flex justify-end space-x-3 pt-5 border-t border-slate-800">
                     <button type="button" onclick="closeEditModal()" class="px-5 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-sm font-semibold text-slate-300 transition">キャンセル</button>
                     <button type="submit" class="px-6 py-3 rounded-xl bg-purple-600 hover:bg-purple-500 text-sm font-bold text-white shadow-lg shadow-purple-600/30 transition">保存する</button>
@@ -172,7 +196,7 @@
     <!-- JavaScript ロジック -->
     <script>
         let isAdmin = false;
-        let musicList = JSON.parse(localStorage.getItem('my_music_list_v3')) || [];
+        let musicList = JSON.parse(localStorage.getItem('my_music_list_v4')) || [];
         let chartInstances = {}; 
 
         if (musicList.length === 0) {
@@ -183,14 +207,18 @@
                     "artist": "GENERATIONS",
                     "youtube": "https://youtu.be/oc395oRnMuk",
                     "streaming": "https://GENERATIONS.lnk.to/vibe0928",
-                    "image": "https://pbs.twimg.com/media/HTMK2_HbkAAK3uZ?format=jpg&name=small"
+                    "image": "https://pbs.twimg.com/media/HTMK2_HbkAAK3uZ?format=jpg&name=small",
+                    "showYtSearch": true,
+                    "showStreaming": true,
+                    "showShare": true,
+                    "showChart": true
                 }
             ];
-            localStorage.setItem('my_music_list_v3', JSON.stringify(musicList));
+            localStorage.setItem('my_music_list_v4', JSON.stringify(musicList));
         }
 
         function saveToStorage() {
-            localStorage.setItem('my_music_list_v3', JSON.stringify(musicList));
+            localStorage.setItem('my_music_list_v4', JSON.stringify(musicList));
         }
 
         window.addEventListener('DOMContentLoaded', () => {
@@ -298,9 +326,14 @@
                 const card = document.createElement('div');
                 card.className = 'glass rounded-[2rem] overflow-hidden shadow-xl relative group hover:border-purple-500/50 transition duration-300 flex flex-col justify-between';
 
-                // YouTube検索用URL（検索欄に「アーティスト名 曲名」が入った状態で開く）
                 const searchQuery = encodeURIComponent(`${item.artist} ${item.title}`);
                 const youtubeSearchUrl = `https://www.youtube.com/results?search_query=${searchQuery}`;
+
+                // 設定値のデフォルト（古いデータ対策として未定義ならtrueにする）
+                const showYtSearch = item.showYtSearch !== false;
+                const showStreaming = item.showStreaming !== false;
+                const showShare = item.showShare !== false;
+                const showChart = item.showChart !== false;
 
                 card.innerHTML = `
                     <div class="relative">
@@ -317,24 +350,26 @@
                                 <p class="text-base text-purple-300 font-semibold truncate">${escapeHtml(item.artist)}</p>
                             </div>
 
-                            <!-- ボタン配置 (YouTube、YouTube検索窓を開く、配信、Xシェア) -->
+                            <!-- ボタン配置 -->
                             <div class="flex flex-wrap gap-3 mb-6">
                                 ${item.youtube ? `<a href="${item.youtube}" target="_blank" onclick="recordYoutubePlay('${item.id}')" class="flex-1 min-w-[120px] py-3 px-3 bg-red-600/90 hover:bg-red-600 text-white rounded-2xl text-sm font-bold flex items-center justify-center space-x-2 shadow-lg transition"><i class="fa-brands fa-youtube text-lg"></i><span>YouTube</span></a>` : ''}
-                                <a href="${youtubeSearchUrl}" target="_blank" class="flex-1 min-w-[120px] py-3 px-3 bg-slate-800 hover:bg-slate-700 text-red-400 rounded-2xl text-sm font-bold flex items-center justify-center space-x-2 shadow-lg border border-slate-700 transition" title="YouTubeの検索欄に入力された状態で開く"><i class="fa-solid fa-magnifying-glass text-sm"></i><span>YT検索窓を開く</span></a>
-                                ${item.streaming ? `<a href="${item.streaming}" target="_blank" class="flex-1 min-w-[120px] py-3 px-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white rounded-2xl text-sm font-bold flex items-center justify-center space-x-2 shadow-lg transition"><i class="fa-solid fa-headphones text-lg"></i><span>配信で聴く</span></a>` : ''}
-                                <button onclick="shareToX('${escapeHtml(item.title)}', '${escapeHtml(item.artist)}')" class="py-3 px-4 bg-slate-800 hover:bg-slate-700 text-white rounded-2xl text-sm font-bold flex items-center justify-center space-x-2 shadow-lg border border-slate-700 transition" title="Xでシェア"><i class="fa-brands fa-x-twitter text-lg text-purple-400"></i><span>シェア</span></button>
+                                ${showYtSearch ? `<a href="${youtubeSearchUrl}" target="_blank" class="flex-1 min-w-[120px] py-3 px-3 bg-slate-800 hover:bg-slate-700 text-red-400 rounded-2xl text-sm font-bold flex items-center justify-center space-x-2 shadow-lg border border-slate-700 transition" title="YouTubeの検索欄にキーワードが入った状態で開く"><i class="fa-solid fa-magnifying-glass text-sm"></i><span>YT検索窓を開く</span></a>` : ''}
+                                ${showStreaming && item.streaming ? `<a href="${item.streaming}" target="_blank" class="flex-1 min-w-[120px] py-3 px-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white rounded-2xl text-sm font-bold flex items-center justify-center space-x-2 shadow-lg transition"><i class="fa-solid fa-headphones text-lg"></i><span>配信で聴く</span></a>` : ''}
+                                ${showShare ? `<button onclick="shareToX('${escapeHtml(item.title)}', '${escapeHtml(item.artist)}')" class="py-3 px-4 bg-slate-800 hover:bg-slate-700 text-white rounded-2xl text-sm font-bold flex items-center justify-center space-x-2 shadow-lg border border-slate-700 transition" title="Xでシェア"><i class="fa-brands fa-x-twitter text-lg text-purple-400"></i><span>シェア</span></button>` : ''}
                             </div>
 
                             <!-- ミニグラフ -->
-                            <div class="pt-4 border-t border-white/10">
-                                <div class="flex items-center justify-between text-sm text-slate-300 mb-2 font-bold">
-                                    <span><i class="fa-solid fa-chart-line text-purple-400 mr-2"></i>再生回数推移 (21:00以降)</span>
-                                    <span id="total-count-${item.id}" class="text-purple-300 bg-purple-900/30 px-3 py-1 rounded-lg">総合: 0回</span>
+                            ${showChart ? `
+                                <div class="pt-4 border-t border-white/10">
+                                    <div class="flex items-center justify-between text-sm text-slate-300 mb-2 font-bold">
+                                        <span><i class="fa-solid fa-chart-line text-purple-400 mr-2"></i>再生回数推移 (21:00以降)</span>
+                                        <span id="total-count-${item.id}" class="text-purple-300 bg-purple-900/30 px-3 py-1 rounded-lg">総合: 0回</span>
+                                    </div>
+                                    <div class="bg-slate-950/60 rounded-2xl p-3 h-32 relative shadow-inner">
+                                        <canvas id="chart-${item.id}"></canvas>
+                                    </div>
                                 </div>
-                                <div class="bg-slate-950/60 rounded-2xl p-3 h-32 relative shadow-inner">
-                                    <canvas id="chart-${item.id}"></canvas>
-                                </div>
-                            </div>
+                            ` : ''}
                         </div>
                     </div>
 
@@ -347,7 +382,9 @@
                 `;
 
                 grid.appendChild(card);
-                renderCardChart(item.id);
+                if (showChart) {
+                    renderCardChart(item.id);
+                }
             });
         }
 
@@ -423,10 +460,19 @@
                     document.getElementById('formYoutube').value = target.youtube || '';
                     document.getElementById('formStreaming').value = target.streaming || '';
                     document.getElementById('formImage').value = target.image || '';
+                    
+                    document.getElementById('showYtSearch').checked = target.showYtSearch !== false;
+                    document.getElementById('showStreaming').checked = target.showStreaming !== false;
+                    document.getElementById('showShare').checked = target.showShare !== false;
+                    document.getElementById('showChart').checked = target.showChart !== false;
                 }
             } else {
                 titleEl.innerHTML = '<i class="fa-solid fa-plus text-purple-400"></i><span>新規曲の追加</span>';
                 document.getElementById('musicId').value = '';
+                document.getElementById('showYtSearch').checked = true;
+                document.getElementById('showStreaming').checked = true;
+                document.getElementById('showShare').checked = true;
+                document.getElementById('showChart').checked = true;
             }
             modal.classList.remove('hidden');
         }
@@ -443,12 +489,19 @@
             const youtube = document.getElementById('formYoutube').value;
             const streaming = document.getElementById('formStreaming').value;
             const image = document.getElementById('formImage').value || 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800&auto=format&fit=crop&q=60';
+            
+            const showYtSearch = document.getElementById('showYtSearch').checked;
+            const showStreaming = document.getElementById('showStreaming').checked;
+            const showShare = document.getElementById('showShare').checked;
+            const showChart = document.getElementById('showChart').checked;
+
+            const newData = { id: id || Date.now().toString(), title, artist, youtube, streaming, image, showYtSearch, showStreaming, showShare, showChart };
 
             if (id) {
                 const index = musicList.findIndex(m => m.id === id);
-                if (index !== -1) musicList[index] = { id, title, artist, youtube, streaming, image };
+                if (index !== -1) musicList[index] = newData;
             } else {
-                musicList.unshift({ id: Date.now().toString(), title, artist, youtube, streaming, image });
+                musicList.unshift(newData);
             }
 
             saveToStorage();
