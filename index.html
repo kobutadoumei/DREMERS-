@@ -81,7 +81,7 @@
                 <input type="hidden" id="musicId">
                 <div>
                     <label class="block text-sm font-semibold text-slate-300 mb-2">タイプ選択 <span class="text-pink-500">*</span></label>
-                    <select id="formType" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-base text-white focus:outline-none focus:border-purple-500">
+                    <select id="formType" onchange="toggleFormTypeFields()" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-base text-white focus:outline-none focus:border-purple-500">
                         <option value="single">単曲 (シングル・MV)</option>
                         <option value="playlist">YouTubeプレイリスト</option>
                     </select>
@@ -94,6 +94,13 @@
                     <label class="block text-sm font-semibold text-slate-300 mb-2">アーティスト名 / 説明 <span class="text-pink-500">*</span></label>
                     <input type="text" id="formArtist" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-base text-white focus:outline-none focus:border-purple-500">
                 </div>
+
+                <!-- プレイリスト専用：収録曲リスト入力フィールド -->
+                <div id="playlistTracksField" class="hidden">
+                    <label class="block text-sm font-semibold text-slate-300 mb-2">プレイリスト内の曲名（1行に1曲ずつ入力）</label>
+                    <textarea id="formTracks" rows="4" placeholder="VIBE&#10;Y.L.S.L.&#10;One Day" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-purple-500"></textarea>
+                </div>
+
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-sm font-semibold text-slate-300 mb-2">YouTubeリンク (動画またはプレイリストURL)</label>
@@ -127,10 +134,6 @@
                         <label class="flex items-center space-x-2 cursor-pointer">
                             <input type="checkbox" id="showShare" class="w-4 h-4 rounded accent-purple-500" checked>
                             <span>シェアボタン</span>
-                        </label>
-                        <label class="flex items-center space-x-2 cursor-pointer">
-                            <input type="checkbox" id="showChart" class="w-4 h-4 rounded accent-purple-500" checked>
-                            <span>再生回数グラフ</span>
                         </label>
                     </div>
                 </div>
@@ -203,7 +206,7 @@
     <!-- JavaScript ロジック -->
     <script>
         let isAdmin = false;
-        let musicList = JSON.parse(localStorage.getItem('my_music_list_v5')) || [];
+        let musicList = JSON.parse(localStorage.getItem('my_music_list_v6')) || [];
         let chartInstances = {}; 
 
         if (musicList.length === 0) {
@@ -228,18 +231,19 @@
                     "artist": "YouTube プレイリスト",
                     "youtube": "https://youtube.com/playlist?list=PLO_5SNZmn4h4&si=FVczdBjTmjzaFnpE",
                     "streaming": "",
+                    "tracks": "VIBE\nY.L.S.L.\nOne Day",
                     "image": "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=800&auto=format&fit=crop&q=60",
                     "showYtSearch": true,
                     "showStreaming": false,
-                    "showShare": true,
-                    "showChart": true
+                    "showShare": false,
+                    "showChart": false
                 }
             ];
-            localStorage.setItem('my_music_list_v5', JSON.stringify(musicList));
+            localStorage.setItem('my_music_list_v6', JSON.stringify(musicList));
         }
 
         function saveToStorage() {
-            localStorage.setItem('my_music_list_v5', JSON.stringify(musicList));
+            localStorage.setItem('my_music_list_v6', JSON.stringify(musicList));
         }
 
         window.addEventListener('DOMContentLoaded', () => {
@@ -323,6 +327,16 @@
             window.open(shareUrl, '_blank');
         }
 
+        function toggleFormTypeFields() {
+            const type = document.getElementById('formType').value;
+            const tracksField = document.getElementById('playlistTracksField');
+            if (type === 'playlist') {
+                tracksField.classList.remove('hidden');
+            } else {
+                tracksField.classList.add('hidden');
+            }
+        }
+
         function renderMusicList() {
             const grid = document.getElementById('musicGrid');
             const emptyState = document.getElementById('emptyState');
@@ -330,7 +344,8 @@
 
             const filtered = musicList.filter(item => 
                 item.title.toLowerCase().includes(keyword) || 
-                item.artist.toLowerCase().includes(keyword)
+                item.artist.toLowerCase().includes(keyword) ||
+                (item.tracks && item.tracks.toLowerCase().includes(keyword))
             );
 
             grid.innerHTML = '';
@@ -351,10 +366,27 @@
                 const searchQuery = encodeURIComponent(`${item.artist} ${item.title}`);
                 const youtubeSearchUrl = `https://www.youtube.com/results?search_query=${searchQuery}`;
 
+                // プレイリストの場合はデフォルトでシェアとグラフを非表示にする
                 const showYtSearch = item.showYtSearch !== false;
                 const showStreaming = item.showStreaming !== false;
-                const showShare = item.showShare !== false;
-                const showChart = item.showChart !== false;
+                const showShare = isPlaylist ? (item.showShare === true) : (item.showShare !== false);
+                const showChart = isPlaylist ? (item.showChart === true) : (item.showChart !== false);
+
+                // 収録曲リストのHTML生成
+                let tracksHtml = '';
+                if (isPlaylist && item.tracks) {
+                    const trackListArray = item.tracks.split('\n').filter(t => t.trim() !== '');
+                    if (trackListArray.length > 0) {
+                        tracksHtml = `
+                            <div class="mb-5 bg-slate-950/40 p-4 rounded-2xl border border-white/5">
+                                <p class="text-xs font-bold text-purple-300 mb-2 uppercase tracking-wider"><i class="fa-solid fa-list-ul mr-1.5"></i>収録曲一覧</p>
+                                <ul class="space-y-1 text-sm text-slate-300 max-h-32 overflow-y-auto pr-1">
+                                    ${trackListArray.map(track => `<li class="flex items-center space-x-2 truncate"><i class="fa-solid fa-music text-xs text-purple-400/70"></i><span class="truncate">${escapeHtml(track)}</span></li>`).join('')}
+                                </ul>
+                            </div>
+                        `;
+                    }
+                }
 
                 card.innerHTML = `
                     <div class="relative">
@@ -367,10 +399,13 @@
 
                         <!-- 下部コンテンツエリア -->
                         <div class="p-6">
-                            <div class="mb-5">
+                            <div class="mb-4">
                                 <h4 class="font-extrabold text-white text-2xl truncate mb-1">${escapeHtml(item.title)}</h4>
                                 <p class="text-base text-purple-300 font-semibold truncate">${escapeHtml(item.artist)}</p>
                             </div>
+
+                            <!-- プレイリストの収録曲リスト表示 -->
+                            ${tracksHtml}
 
                             <!-- ボタン配置 -->
                             <div class="flex flex-wrap gap-3 mb-6">
@@ -480,14 +515,15 @@
                     document.getElementById('formType').value = target.type || 'single';
                     document.getElementById('formTitle').value = target.title;
                     document.getElementById('formArtist').value = target.artist;
+                    document.getElementById('formTracks').value = target.tracks || '';
                     document.getElementById('formYoutube').value = target.youtube || '';
                     document.getElementById('formStreaming').value = target.streaming || '';
                     document.getElementById('formImage').value = target.image || '';
                     
                     document.getElementById('showYtSearch').checked = target.showYtSearch !== false;
                     document.getElementById('showStreaming').checked = target.showStreaming !== false;
-                    document.getElementById('showShare').checked = target.showShare !== false;
-                    document.getElementById('showChart').checked = target.showChart !== false;
+                    document.getElementById('showShare').checked = target.showShare === true; // デフォルト非表示
+                    document.getElementById('showChart').checked = target.showChart === true; // デフォルト非表示
                 }
             } else {
                 titleEl.innerHTML = '<i class="fa-solid fa-plus text-purple-400"></i><span>新規コンテンツの追加</span>';
@@ -498,6 +534,7 @@
                 document.getElementById('showShare').checked = true;
                 document.getElementById('showChart').checked = true;
             }
+            toggleFormTypeFields();
             modal.classList.remove('hidden');
         }
 
@@ -511,6 +548,7 @@
             const type = document.getElementById('formType').value;
             const title = document.getElementById('formTitle').value;
             const artist = document.getElementById('formArtist').value;
+            const tracks = document.getElementById('formTracks').value;
             const youtube = document.getElementById('formYoutube').value;
             const streaming = document.getElementById('formStreaming').value;
             const image = document.getElementById('formImage').value || 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800&auto=format&fit=crop&q=60';
@@ -520,7 +558,7 @@
             const showShare = document.getElementById('showShare').checked;
             const showChart = document.getElementById('showChart').checked;
 
-            const newData = { id: id || Date.now().toString(), type, title, artist, youtube, streaming, image, showYtSearch, showStreaming, showShare, showChart };
+            const newData = { id: id || Date.now().toString(), type, title, artist, tracks, youtube, streaming, image, showYtSearch, showStreaming, showShare, showChart };
 
             if (id) {
                 const index = musicList.findIndex(m => m.id === id);
