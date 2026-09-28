@@ -89,7 +89,7 @@
                 </div>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-sm font-semibold text-slate-300 mb-2">YouTubeリンク</label>
+                        <label class="block text-sm font-semibold text-slate-300 mb-2">YouTubeリンク (指定動画)</label>
                         <input type="url" id="formYoutube" placeholder="https://youtu.be/..." class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-base text-white focus:outline-none focus:border-purple-500">
                     </div>
                     <div>
@@ -172,7 +172,7 @@
     <!-- JavaScript ロジック -->
     <script>
         let isAdmin = false;
-        let musicList = JSON.parse(localStorage.getItem('my_music_list_v2')) || [];
+        let musicList = JSON.parse(localStorage.getItem('my_music_list_v3')) || [];
         let chartInstances = {}; 
 
         if (musicList.length === 0) {
@@ -186,11 +186,11 @@
                     "image": "https://pbs.twimg.com/media/HTMK2_HbkAAK3uZ?format=jpg&name=small"
                 }
             ];
-            localStorage.setItem('my_music_list_v2', JSON.stringify(musicList));
+            localStorage.setItem('my_music_list_v3', JSON.stringify(musicList));
         }
 
         function saveToStorage() {
-            localStorage.setItem('my_music_list_v2', JSON.stringify(musicList));
+            localStorage.setItem('my_music_list_v3', JSON.stringify(musicList));
         }
 
         window.addEventListener('DOMContentLoaded', () => {
@@ -298,9 +298,13 @@
                 const card = document.createElement('div');
                 card.className = 'glass rounded-[2rem] overflow-hidden shadow-xl relative group hover:border-purple-500/50 transition duration-300 flex flex-col justify-between';
 
+                // YouTube検索用URLを生成（例: "GENERATIONS VIBE" で検索）
+                const searchQuery = encodeURIComponent(`${item.artist} ${item.title}`);
+                const youtubeSearchUrl = `https://www.youtube.com/results?search_query=${searchQuery}`;
+
                 card.innerHTML = `
                     <div class="relative">
-                        <!-- 位置調整およびリンクを付与した横長ワイド画像セクション -->
+                        <!-- ヘッダー画像セクション -->
                         <div class="w-full h-40 bg-slate-950 overflow-hidden relative group">
                             <img src="${item.image || 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800&auto=format&fit=crop&q=60'}" class="absolute inset-0 w-full h-full object-cover object-center group-hover:scale-105 transition duration-500" alt="${escapeHtml(item.title)}">
                             <div class="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent"></div>
@@ -313,9 +317,10 @@
                                 <p class="text-base text-purple-300 font-semibold truncate">${escapeHtml(item.artist)}</p>
                             </div>
 
-                            <!-- ボタン配置 (YouTube、配信、Xシェアボタン) -->
+                            <!-- ボタン配置 (YouTube指定動画、YouTube検索、配信、Xシェア) -->
                             <div class="flex flex-wrap gap-3 mb-6">
                                 ${item.youtube ? `<a href="${item.youtube}" target="_blank" onclick="recordYoutubePlay('${item.id}')" class="flex-1 min-w-[120px] py-3 px-3 bg-red-600/90 hover:bg-red-600 text-white rounded-2xl text-sm font-bold flex items-center justify-center space-x-2 shadow-lg transition"><i class="fa-brands fa-youtube text-lg"></i><span>YouTube</span></a>` : ''}
+                                <a href="${youtubeSearchUrl}" target="_blank" class="flex-1 min-w-[120px] py-3 px-3 bg-red-700/70 hover:bg-red-700 text-white rounded-2xl text-sm font-bold flex items-center justify-center space-x-2 shadow-lg transition" title="YouTubeで検索"><i class="fa-solid fa-magnifying-glass text-sm"></i><span>YT検索</span></a>
                                 ${item.streaming ? `<a href="${item.streaming}" target="_blank" class="flex-1 min-w-[120px] py-3 px-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white rounded-2xl text-sm font-bold flex items-center justify-center space-x-2 shadow-lg transition"><i class="fa-solid fa-headphones text-lg"></i><span>配信で聴く</span></a>` : ''}
                                 <button onclick="shareToX('${escapeHtml(item.title)}', '${escapeHtml(item.artist)}')" class="py-3 px-4 bg-slate-800 hover:bg-slate-700 text-white rounded-2xl text-sm font-bold flex items-center justify-center space-x-2 shadow-lg border border-slate-700 transition" title="Xでシェア"><i class="fa-brands fa-x-twitter text-lg text-purple-400"></i><span>シェア</span></button>
                             </div>
@@ -551,7 +556,7 @@
             } catch (err) {
                 qrContainer.innerHTML = '<p class="text-sm text-red-500">QR生成エラー</p>';
             }
-            document.getElementById('qrModal').classList.remove('hidden');
+            document.getElementById('qrModal').classList.add('hidden');
         }
 
         function closeQRModal() { document.getElementById('qrModal').classList.add('hidden'); }
