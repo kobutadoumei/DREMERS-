@@ -29,7 +29,6 @@
                     <p class="text-sm text-purple-300/80 font-medium">One-Touch Streaming Portal</p>
                 </div>
             </div>
-            
             <div class="flex items-center space-x-2">
                 <button onclick="openQRModal()" class="px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-sm font-semibold flex items-center space-x-2 transition border border-white/10">
                     <i class="fa-solid fa-qrcode text-purple-400"></i>
@@ -50,7 +49,6 @@
                 <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-base"></i>
                 <input type="text" id="searchInput" oninput="renderMusicList()" placeholder="曲名やアーティスト名で検索..." class="w-full bg-slate-800/60 border border-slate-700/60 rounded-2xl pl-12 pr-4 py-3 text-base focus:outline-none focus:border-purple-500 transition shadow-inner">
             </div>
-            
             <button id="addBtn" onclick="openEditModal()" class="hidden px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white rounded-2xl text-base font-bold shadow-lg shadow-purple-600/30 flex items-center justify-center space-x-2 transition">
                 <i class="fa-solid fa-plus"></i>
                 <span>新規追加</span>
@@ -79,7 +77,6 @@
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
-
             <form id="musicForm" onsubmit="saveMusic(event)" class="space-y-5">
                 <input type="hidden" id="musicId">
                 <div>
@@ -115,7 +112,7 @@
         </div>
     </div>
 
-    <!-- 画像トリミング・位置調整モーダル (ズーム倍率を大幅に拡大・縮小可能に調整) -->
+    <!-- 画像トリミング・位置調整モーダル -->
     <div id="cropModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
         <div class="bg-slate-900 border border-slate-800 w-full max-w-md rounded-3xl p-6 shadow-2xl text-center">
             <h3 class="text-lg font-bold text-white mb-2">横長画像の調整</h3>
@@ -125,7 +122,6 @@
             </div>
             <div class="mb-6 px-4">
                 <label class="block text-sm text-slate-400 mb-2">ズーム倍率 (最小0.2 〜 最大3)</label>
-                <!-- minを0.2に下げて、より広く縮小表示できるように変更 -->
                 <input type="range" id="zoomRange" min="0.2" max="3" step="0.05" value="1" oninput="updateCropTransform()" class="w-full accent-purple-500">
             </div>
             <div class="flex space-x-3">
@@ -250,7 +246,6 @@
             }
         }
 
-        // YouTubeボタンが押されたときのカウント関数（2026年9月28日 21:00以降のみカウント）
         function recordYoutubePlay(id) {
             const targetTime = new Date('2026-09-28T21:00:00').getTime();
             const currentTime = new Date().getTime();
@@ -270,6 +265,13 @@
 
             localStorage.setItem('my_music_stats', JSON.stringify(stats));
             renderCardChart(id);
+        }
+
+        function shareToX(title, artist) {
+            const text = `「${title} / ${artist}」を聴いています！\n\n#GENERATIONS #GENEisBack #GENE_VIBE #VIBE_GOHIG\n`;
+            const url = window.location.href;
+            const shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
+            window.open(shareUrl, '_blank');
         }
 
         function renderMusicList() {
@@ -295,12 +297,12 @@
             filtered.forEach(item => {
                 const card = document.createElement('div');
                 card.className = 'glass rounded-[2rem] overflow-hidden shadow-xl relative group hover:border-purple-500/50 transition duration-300 flex flex-col justify-between';
-                
+
                 card.innerHTML = `
-                    <div>
+                    <div class="relative">
                         <!-- 上部配置：Xヘッダー風の大きな横長ワイド画像 -->
                         <div class="w-full h-40 bg-slate-950 overflow-hidden relative">
-                            <img src="${item.image || 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800&auto=format&fit=crop&q=60'}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" alt="${item.title}">
+                            <img src="${item.image || 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800&auto=format&fit=crop&q=60'}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" alt="${escapeHtml(item.title)}">
                             <div class="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent"></div>
                         </div>
 
@@ -310,11 +312,12 @@
                                 <h4 class="font-extrabold text-white text-2xl truncate mb-1">${escapeHtml(item.title)}</h4>
                                 <p class="text-base text-purple-300 font-semibold truncate">${escapeHtml(item.artist)}</p>
                             </div>
-                            
-                            <!-- ボタン配置 -->
+
+                            <!-- ボタン配置 (YouTube、配信、Xシェアボタン) -->
                             <div class="flex flex-wrap gap-3 mb-6">
-                                ${item.youtube ? `<a href="${item.youtube}" target="_blank" onclick="recordYoutubePlay('${item.id}')" class="flex-1 min-w-[130px] py-3 px-4 bg-red-600/90 hover:bg-red-600 text-white rounded-2xl text-sm font-bold flex items-center justify-center space-x-2 shadow-lg transition"><i class="fa-brands fa-youtube text-lg"></i><span>YouTube</span></a>` : ''}
-                                ${item.streaming ? `<a href="${item.streaming}" target="_blank" class="flex-1 min-w-[130px] py-3 px-4 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white rounded-2xl text-sm font-bold flex items-center justify-center space-x-2 shadow-lg transition"><i class="fa-solid fa-headphones text-lg"></i><span>配信で聴く</span></a>` : ''}
+                                ${item.youtube ? `<a href="${item.youtube}" target="_blank" onclick="recordYoutubePlay('${item.id}')" class="flex-1 min-w-[120px] py-3 px-3 bg-red-600/90 hover:bg-red-600 text-white rounded-2xl text-sm font-bold flex items-center justify-center space-x-2 shadow-lg transition"><i class="fa-brands fa-youtube text-lg"></i><span>YouTube</span></a>` : ''}
+                                ${item.streaming ? `<a href="${item.streaming}" target="_blank" class="flex-1 min-w-[120px] py-3 px-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white rounded-2xl text-sm font-bold flex items-center justify-center space-x-2 shadow-lg transition"><i class="fa-solid fa-headphones text-lg"></i><span>配信で聴く</span></a>` : ''}
+                                <button onclick="shareToX('${escapeHtml(item.title)}', '${escapeHtml(item.artist)}')" class="py-3 px-4 bg-slate-800 hover:bg-slate-700 text-white rounded-2xl text-sm font-bold flex items-center justify-center space-x-2 shadow-lg border border-slate-700 transition" title="Xでシェア"><i class="fa-brands fa-x-twitter text-lg text-purple-400"></i><span>シェア</span></button>
                             </div>
 
                             <!-- ミニグラフ -->
@@ -337,6 +340,7 @@
                         </div>
                     ` : ''}
                 `;
+
                 grid.appendChild(card);
                 renderCardChart(item.id);
             });
@@ -349,7 +353,7 @@
 
             const stats = JSON.parse(localStorage.getItem('my_music_stats')) || {};
             const itemStats = stats[id] || { total: 0, times: {} };
-            
+
             if (totalEl) {
                 totalEl.textContent = `総合: ${itemStats.total}回`;
             }
@@ -403,7 +407,7 @@
             const modal = document.getElementById('editModal');
             const titleEl = document.getElementById('modalTitle');
             document.getElementById('musicForm').reset();
-            
+
             if (id) {
                 titleEl.innerHTML = '<i class="fa-solid fa-pen-to-square text-purple-400"></i><span>曲情報の編集</span>';
                 const target = musicList.find(m => m.id === id);
@@ -422,7 +426,9 @@
             modal.classList.remove('hidden');
         }
 
-        function closeEditModal() { document.getElementById('editModal').classList.add('hidden'); }
+        function closeEditModal() {
+            document.getElementById('editModal').classList.add('hidden');
+        }
 
         function saveMusic(e) {
             e.preventDefault();
@@ -515,11 +521,11 @@
             const ctx = canvas.getContext('2d');
             ctx.fillStyle = '#0f172a';
             ctx.fillRect(0, 0, 800, 320);
-            
+
             const img = cropState.imageObj;
             const containerWidth = container.clientWidth;
             const ratio = 800 / containerWidth;
-            
+
             ctx.save();
             ctx.translate(cropState.posX * ratio, cropState.posY * ratio);
             ctx.scale(cropState.scale, cropState.scale);
