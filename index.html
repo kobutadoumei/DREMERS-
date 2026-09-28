@@ -115,7 +115,7 @@
         </div>
     </div>
 
-    <!-- 画像トリミング・位置調整モーダル (Xヘッダー型) -->
+    <!-- 画像トリミング・位置調整モーダル (ズーム倍率を大幅に拡大・縮小可能に調整) -->
     <div id="cropModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
         <div class="bg-slate-900 border border-slate-800 w-full max-w-md rounded-3xl p-6 shadow-2xl text-center">
             <h3 class="text-lg font-bold text-white mb-2">横長画像の調整</h3>
@@ -124,8 +124,9 @@
                 <img id="cropImage" class="absolute max-none origin-top-left pointer-events-none" alt="Crop preview">
             </div>
             <div class="mb-6 px-4">
-                <label class="block text-sm text-slate-400 mb-2">ズーム倍率</label>
-                <input type="range" id="zoomRange" min="1" max="3" step="0.05" value="1" oninput="updateCropTransform()" class="w-full accent-purple-500">
+                <label class="block text-sm text-slate-400 mb-2">ズーム倍率 (最小0.2 〜 最大3)</label>
+                <!-- minを0.2に下げて、より広く縮小表示できるように変更 -->
+                <input type="range" id="zoomRange" min="0.2" max="3" step="0.05" value="1" oninput="updateCropTransform()" class="w-full accent-purple-500">
             </div>
             <div class="flex space-x-3">
                 <button type="button" onclick="closeCropModal()" class="flex-1 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-sm font-semibold text-slate-300 transition">キャンセル</button>
@@ -164,7 +165,7 @@
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
-            <p class="text-sm text-slate-400 mb-5">管理者パスワードを入力（初期: password）</p>
+            <p class="text-sm text-slate-400 mb-5">管理者パスワードを入力</p>
             <form onsubmit="handleLoginSubmit(event)" class="space-y-4">
                 <input type="password" id="adminPasswordInput" placeholder="パスワード" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-base text-white focus:outline-none focus:border-purple-500">
                 <button type="submit" class="w-full py-3 rounded-xl bg-purple-600 hover:bg-purple-500 text-base font-bold text-white shadow-lg shadow-purple-600/30 transition">ログイン</button>
@@ -238,14 +239,14 @@
         function handleLoginSubmit(e) {
             e.preventDefault();
             const pass = document.getElementById('adminPasswordInput').value;
-            if (pass === 'komonozo0613') {
+            if (pass === 'gen888') {
                 isAdmin = true;
                 closeLoginModal();
                 document.getElementById('adminPasswordInput').value = '';
                 alert('管理者としてログインしました！');
                 checkAuthUI();
             } else {
-                alert('パスワードが違います（初期設定は password です）');
+                alert('パスワードが違います');
             }
         }
 
@@ -254,7 +255,6 @@
             const targetTime = new Date('2026-09-28T21:00:00').getTime();
             const currentTime = new Date().getTime();
 
-            // 2026-09-28 21:00 より前ならカウントしない
             if (currentTime < targetTime) {
                 alert('この曲の再生カウント集計は 2026年9月28日 21:00 から開始されます！');
                 return;
@@ -311,7 +311,7 @@
                                 <p class="text-base text-purple-300 font-semibold truncate">${escapeHtml(item.artist)}</p>
                             </div>
                             
-                            <!-- ボタン配置 (YouTubeのみ時間制限付きカウント関数を適用) -->
+                            <!-- ボタン配置 -->
                             <div class="flex flex-wrap gap-3 mb-6">
                                 ${item.youtube ? `<a href="${item.youtube}" target="_blank" onclick="recordYoutubePlay('${item.id}')" class="flex-1 min-w-[130px] py-3 px-4 bg-red-600/90 hover:bg-red-600 text-white rounded-2xl text-sm font-bold flex items-center justify-center space-x-2 shadow-lg transition"><i class="fa-brands fa-youtube text-lg"></i><span>YouTube</span></a>` : ''}
                                 ${item.streaming ? `<a href="${item.streaming}" target="_blank" class="flex-1 min-w-[130px] py-3 px-4 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white rounded-2xl text-sm font-bold flex items-center justify-center space-x-2 shadow-lg transition"><i class="fa-solid fa-headphones text-lg"></i><span>配信で聴く</span></a>` : ''}
