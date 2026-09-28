@@ -205,7 +205,7 @@
     <!-- JavaScript ロジック -->
     <script>
         let isAdmin = false;
-        let musicList = JSON.parse(localStorage.getItem('my_music_list_v6')) || [];
+        let musicList = JSON.parse(localStorage.getItem('my_music_list_v9')) || [];
 
         if (musicList.length === 0) {
             musicList = [
@@ -235,11 +235,11 @@
                     "showShare": false
                 }
             ];
-            localStorage.setItem('my_music_list_v6', JSON.stringify(musicList));
+            localStorage.setItem('my_music_list_v9', JSON.stringify(musicList));
         }
 
         function saveToStorage() {
-            localStorage.setItem('my_music_list_v6', JSON.stringify(musicList));
+            localStorage.setItem('my_music_list_v9', JSON.stringify(musicList));
         }
 
         window.addEventListener('DOMContentLoaded', () => {
