@@ -47,7 +47,7 @@
         <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 mb-8">
             <div class="relative flex-1">
                 <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-base"></i>
-                <input type="text" id="searchInput" oninput="renderMusicList()" placeholder="曲名やアーティスト名で検索..." class="w-full bg-slate-800/60 border border-slate-700/60 rounded-2xl pl-12 pr-4 py-3 text-base focus:outline-none focus:border-purple-500 transition shadow-inner">
+                <input type="text" id="searchInput" oninput="renderMusicList()" placeholder="曲名やアーティスト名、プレイリスト名で検索..." class="w-full bg-slate-800/60 border border-slate-700/60 rounded-2xl pl-12 pr-4 py-3 text-base focus:outline-none focus:border-purple-500 transition shadow-inner">
             </div>
             <button id="addBtn" onclick="openEditModal()" class="hidden px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white rounded-2xl text-base font-bold shadow-lg shadow-purple-600/30 flex items-center justify-center space-x-2 transition">
                 <i class="fa-solid fa-plus"></i>
@@ -61,7 +61,7 @@
             <div class="w-20 h-20 bg-slate-800/80 rounded-full flex items-center justify-center mx-auto mb-5 text-slate-500 text-3xl border border-slate-700">
                 <i class="fa-solid fa-music"></i>
             </div>
-            <p class="text-slate-400 text-base font-medium">まだ曲が登録されていません</p>
+            <p class="text-slate-400 text-base font-medium">まだコンテンツが登録されていません</p>
         </div>
     </main>
 
@@ -71,7 +71,7 @@
             <div class="flex items-center justify-between mb-5">
                 <h3 id="modalTitle" class="text-xl font-bold text-white flex items-center space-x-2">
                     <i class="fa-solid fa-pen-to-square text-purple-400"></i>
-                    <span>曲情報の編集</span>
+                    <span>情報の編集</span>
                 </h3>
                 <button onclick="closeEditModal()" class="w-10 h-10 rounded-full bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-slate-400 hover:text-white transition text-lg">
                     <i class="fa-solid fa-xmark"></i>
@@ -80,17 +80,24 @@
             <form id="musicForm" onsubmit="saveMusic(event)" class="space-y-5">
                 <input type="hidden" id="musicId">
                 <div>
-                    <label class="block text-sm font-semibold text-slate-300 mb-2">曲名 <span class="text-pink-500">*</span></label>
+                    <label class="block text-sm font-semibold text-slate-300 mb-2">タイプ選択 <span class="text-pink-500">*</span></label>
+                    <select id="formType" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-base text-white focus:outline-none focus:border-purple-500">
+                        <option value="single">単曲 (シングル・MV)</option>
+                        <option value="playlist">YouTubeプレイリスト</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-slate-300 mb-2">タイトル (曲名 または プレイリスト名) <span class="text-pink-500">*</span></label>
                     <input type="text" id="formTitle" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-base text-white focus:outline-none focus:border-purple-500">
                 </div>
                 <div>
-                    <label class="block text-sm font-semibold text-slate-300 mb-2">アーティスト名 <span class="text-pink-500">*</span></label>
+                    <label class="block text-sm font-semibold text-slate-300 mb-2">アーティスト名 / 説明 <span class="text-pink-500">*</span></label>
                     <input type="text" id="formArtist" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-base text-white focus:outline-none focus:border-purple-500">
                 </div>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-sm font-semibold text-slate-300 mb-2">YouTubeリンク (指定動画)</label>
-                        <input type="url" id="formYoutube" placeholder="https://youtu.be/..." class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-base text-white focus:outline-none focus:border-purple-500">
+                        <label class="block text-sm font-semibold text-slate-300 mb-2">YouTubeリンク (動画またはプレイリストURL)</label>
+                        <input type="url" id="formYoutube" placeholder="https://..." class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-base text-white focus:outline-none focus:border-purple-500">
                     </div>
                     <div>
                         <label class="block text-sm font-semibold text-slate-300 mb-2">音楽配信リンク</label>
@@ -196,13 +203,14 @@
     <!-- JavaScript ロジック -->
     <script>
         let isAdmin = false;
-        let musicList = JSON.parse(localStorage.getItem('my_music_list_v4')) || [];
+        let musicList = JSON.parse(localStorage.getItem('my_music_list_v5')) || [];
         let chartInstances = {}; 
 
         if (musicList.length === 0) {
             musicList = [
                 {
                     "id": "1",
+                    "type": "single",
                     "title": "VIBE",
                     "artist": "GENERATIONS",
                     "youtube": "https://youtu.be/oc395oRnMuk",
@@ -212,13 +220,26 @@
                     "showStreaming": true,
                     "showShare": true,
                     "showChart": true
+                },
+                {
+                    "id": "2",
+                    "type": "playlist",
+                    "title": "GENERATIONS プレイリスト",
+                    "artist": "YouTube プレイリスト",
+                    "youtube": "https://youtube.com/playlist?list=PLO_5SNZmn4h4&si=FVczdBjTmjzaFnpE",
+                    "streaming": "",
+                    "image": "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=800&auto=format&fit=crop&q=60",
+                    "showYtSearch": true,
+                    "showStreaming": false,
+                    "showShare": true,
+                    "showChart": true
                 }
             ];
-            localStorage.setItem('my_music_list_v4', JSON.stringify(musicList));
+            localStorage.setItem('my_music_list_v5', JSON.stringify(musicList));
         }
 
         function saveToStorage() {
-            localStorage.setItem('my_music_list_v4', JSON.stringify(musicList));
+            localStorage.setItem('my_music_list_v5', JSON.stringify(musicList));
         }
 
         window.addEventListener('DOMContentLoaded', () => {
@@ -279,7 +300,7 @@
             const currentTime = new Date().getTime();
 
             if (currentTime < targetTime) {
-                alert('この曲の再生カウント集計は 2026年9月28日 21:00 から開始されます！');
+                alert('このコンテンツの再生カウント集計は 2026年9月28日 21:00 から開始されます！');
                 return;
             }
 
@@ -296,7 +317,7 @@
         }
 
         function shareToX(title, artist) {
-            const text = `「${title} / ${artist}」を聴いています！\n\n#GENERATIONS #GENEisBack #GENE_VIBE #VIBE_GOHIG\n`;
+            const text = `「${title} / ${artist}」をチェック中！\n\n#GENERATIONS #GENEisBack #VIBE_GOHIG\n`;
             const url = window.location.href;
             const shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
             window.open(shareUrl, '_blank');
@@ -326,10 +347,10 @@
                 const card = document.createElement('div');
                 card.className = 'glass rounded-[2rem] overflow-hidden shadow-xl relative group hover:border-purple-500/50 transition duration-300 flex flex-col justify-between';
 
+                const isPlaylist = item.type === 'playlist';
                 const searchQuery = encodeURIComponent(`${item.artist} ${item.title}`);
                 const youtubeSearchUrl = `https://www.youtube.com/results?search_query=${searchQuery}`;
 
-                // 設定値のデフォルト（古いデータ対策として未定義ならtrueにする）
                 const showYtSearch = item.showYtSearch !== false;
                 const showStreaming = item.showStreaming !== false;
                 const showShare = item.showShare !== false;
@@ -341,6 +362,7 @@
                         <div class="w-full h-40 bg-slate-950 overflow-hidden relative group">
                             <img src="${item.image || 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800&auto=format&fit=crop&q=60'}" class="absolute inset-0 w-full h-full object-cover object-center group-hover:scale-105 transition duration-500" alt="${escapeHtml(item.title)}">
                             <div class="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent"></div>
+                            ${isPlaylist ? `<span class="absolute top-3 left-3 bg-purple-600/90 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md flex items-center space-x-1"><i class="fa-solid fa-list mr-1"></i>プレイリスト</span>` : ''}
                         </div>
 
                         <!-- 下部コンテンツエリア -->
@@ -352,8 +374,8 @@
 
                             <!-- ボタン配置 -->
                             <div class="flex flex-wrap gap-3 mb-6">
-                                ${item.youtube ? `<a href="${item.youtube}" target="_blank" onclick="recordYoutubePlay('${item.id}')" class="flex-1 min-w-[120px] py-3 px-3 bg-red-600/90 hover:bg-red-600 text-white rounded-2xl text-sm font-bold flex items-center justify-center space-x-2 shadow-lg transition"><i class="fa-brands fa-youtube text-lg"></i><span>YouTube</span></a>` : ''}
-                                ${showYtSearch ? `<a href="${youtubeSearchUrl}" target="_blank" class="flex-1 min-w-[120px] py-3 px-3 bg-slate-800 hover:bg-slate-700 text-red-400 rounded-2xl text-sm font-bold flex items-center justify-center space-x-2 shadow-lg border border-slate-700 transition" title="YouTubeの検索欄にキーワードが入った状態で開く"><i class="fa-solid fa-magnifying-glass text-sm"></i><span>YT検索窓を開く</span></a>` : ''}
+                                ${item.youtube ? `<a href="${item.youtube}" target="_blank" onclick="recordYoutubePlay('${item.id}')" class="flex-1 min-w-[120px] py-3 px-3 bg-red-600/90 hover:bg-red-600 text-white rounded-2xl text-sm font-bold flex items-center justify-center space-x-2 shadow-lg transition"><i class="fa-brands fa-youtube text-lg"></i><span>${isPlaylist ? 'プレイリストを開く' : 'YouTube'}</span></a>` : ''}
+                                ${showYtSearch && !isPlaylist ? `<a href="${youtubeSearchUrl}" target="_blank" class="flex-1 min-w-[120px] py-3 px-3 bg-slate-800 hover:bg-slate-700 text-red-400 rounded-2xl text-sm font-bold flex items-center justify-center space-x-2 shadow-lg border border-slate-700 transition" title="YouTubeの検索欄にキーワードが入った状態で開く"><i class="fa-solid fa-magnifying-glass text-sm"></i><span>YT検索窓を開く</span></a>` : ''}
                                 ${showStreaming && item.streaming ? `<a href="${item.streaming}" target="_blank" class="flex-1 min-w-[120px] py-3 px-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white rounded-2xl text-sm font-bold flex items-center justify-center space-x-2 shadow-lg transition"><i class="fa-solid fa-headphones text-lg"></i><span>配信で聴く</span></a>` : ''}
                                 ${showShare ? `<button onclick="shareToX('${escapeHtml(item.title)}', '${escapeHtml(item.artist)}')" class="py-3 px-4 bg-slate-800 hover:bg-slate-700 text-white rounded-2xl text-sm font-bold flex items-center justify-center space-x-2 shadow-lg border border-slate-700 transition" title="Xでシェア"><i class="fa-brands fa-x-twitter text-lg text-purple-400"></i><span>シェア</span></button>` : ''}
                             </div>
@@ -362,7 +384,7 @@
                             ${showChart ? `
                                 <div class="pt-4 border-t border-white/10">
                                     <div class="flex items-center justify-between text-sm text-slate-300 mb-2 font-bold">
-                                        <span><i class="fa-solid fa-chart-line text-purple-400 mr-2"></i>再生回数推移 (21:00以降)</span>
+                                        <span><i class="fa-solid fa-chart-line text-purple-400 mr-2"></i>アクセス推移 (21:00以降)</span>
                                         <span id="total-count-${item.id}" class="text-purple-300 bg-purple-900/30 px-3 py-1 rounded-lg">総合: 0回</span>
                                     </div>
                                     <div class="bg-slate-950/60 rounded-2xl p-3 h-32 relative shadow-inner">
@@ -415,7 +437,7 @@
                 data: {
                     labels: labels,
                     datasets: [{
-                        label: '再生回数',
+                        label: 'アクセス数',
                         data: dataValues,
                         borderColor: 'rgba(168, 85, 247, 1)',
                         backgroundColor: 'rgba(168, 85, 247, 0.15)',
@@ -451,10 +473,11 @@
             document.getElementById('musicForm').reset();
 
             if (id) {
-                titleEl.innerHTML = '<i class="fa-solid fa-pen-to-square text-purple-400"></i><span>曲情報の編集</span>';
+                titleEl.innerHTML = '<i class="fa-solid fa-pen-to-square text-purple-400"></i><span>情報の編集</span>';
                 const target = musicList.find(m => m.id === id);
                 if (target) {
                     document.getElementById('musicId').value = target.id;
+                    document.getElementById('formType').value = target.type || 'single';
                     document.getElementById('formTitle').value = target.title;
                     document.getElementById('formArtist').value = target.artist;
                     document.getElementById('formYoutube').value = target.youtube || '';
@@ -467,8 +490,9 @@
                     document.getElementById('showChart').checked = target.showChart !== false;
                 }
             } else {
-                titleEl.innerHTML = '<i class="fa-solid fa-plus text-purple-400"></i><span>新規曲の追加</span>';
+                titleEl.innerHTML = '<i class="fa-solid fa-plus text-purple-400"></i><span>新規コンテンツの追加</span>';
                 document.getElementById('musicId').value = '';
+                document.getElementById('formType').value = 'single';
                 document.getElementById('showYtSearch').checked = true;
                 document.getElementById('showStreaming').checked = true;
                 document.getElementById('showShare').checked = true;
@@ -484,6 +508,7 @@
         function saveMusic(e) {
             e.preventDefault();
             const id = document.getElementById('musicId').value;
+            const type = document.getElementById('formType').value;
             const title = document.getElementById('formTitle').value;
             const artist = document.getElementById('formArtist').value;
             const youtube = document.getElementById('formYoutube').value;
@@ -495,7 +520,7 @@
             const showShare = document.getElementById('showShare').checked;
             const showChart = document.getElementById('showChart').checked;
 
-            const newData = { id: id || Date.now().toString(), title, artist, youtube, streaming, image, showYtSearch, showStreaming, showShare, showChart };
+            const newData = { id: id || Date.now().toString(), type, title, artist, youtube, streaming, image, showYtSearch, showStreaming, showShare, showChart };
 
             if (id) {
                 const index = musicList.findIndex(m => m.id === id);
@@ -511,7 +536,7 @@
         }
 
         function deleteMusic(id) {
-            if (confirm('この曲を削除してもよろしいですか？')) {
+            if (confirm('このコンテンツを削除してもよろしいですか？')) {
                 musicList = musicList.filter(m => m.id !== id);
                 saveToStorage();
                 renderMusicList();
